@@ -74,3 +74,56 @@ A modern, intuitive, and GUI-driven VS Code extension for CMake-based C/C++ proj
 - `cmakeGui.autoScanOnOpen`: Automatically scan workspace on open (default: `true`).
 - `cmakeGui.runInTerminal`: Run commands in integrated terminal instead of Output Channel (default: `false`).
 - `cmakeGui.parallelJobs`: Number of parallel jobs for building (default: `0` for auto-detect).
+
+---
+
+## 🔨 How to Build, Test & Package
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or newer)
+- `npm` (comes with Node.js)
+- `cmake` (version 3.20+ recommended for presets)
+
+### 1. Install Dependencies
+Clone the repository and install npm packages:
+```bash
+npm install
+```
+
+### 2. Compile TypeScript
+To compile the TypeScript source files to JavaScript in `dist/`:
+```bash
+npm run compile
+```
+
+To continuously watch and recompile on file changes during development:
+```bash
+npm run watch
+```
+
+### 3. Bundle with esbuild (Fast Single-File Output)
+To bundle the extension into an optimized single file (`dist/extension.js`):
+```bash
+npm run bundle
+```
+
+### 4. Run Unit Tests
+To verify preset resolution, macro expansion, and cache parsing:
+```bash
+node test/runTests.cjs
+```
+
+### 5. Package as `.vsix`
+To package the extension into an installable `.vsix` archive:
+```bash
+npx @vscode/vsce package --no-git-tag-version --allow-missing-repository
+```
+This generates `cmake-gui-builder-1.0.0.vsix` in the workspace root.
+
+### 6. Run & Debug in VS Code
+- Open this project folder in VS Code.
+- Press **`F5`** (or go to **Run > Start Debugging**).
+- A new **Extension Development Host** window will open with `sample-project` pre-loaded.
+- Click the **CMake** icon on the Activity Bar to test the panel, dropdowns, and build actions live.
+
+
