@@ -1,6 +1,7 @@
-# CMake Configurator & Build Panel for VS Code
+# CMake Project Configuration/Build Helper for VS Code
 
 A modern, intuitive, and GUI-driven VS Code extension for CMake-based C/C++ projects. Automatically scans your workspace for CMake projects, parses `CMakePresets.json`, and provides a rich sidebar panel with dropdown preset selectors, quick build actions, cache configurator, and live streaming output.
+
 
 ---
 

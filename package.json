@@ -1,13 +1,12 @@
 {
   "name": "cmake-gui-builder",
-  "displayName": "CMake Configurator & Build Panel",
+  "displayName": "CMake Project Configuration/Build Helper",
   "description": "Smart CMake project scanner, GUI configurator, and build panel with preset selection dropdowns",
   "version": "1.0.0",
   "publisher": "samir",
   "license": "MIT",
   "icon": "resources/icon.png",
   "engines": {
-
     "vscode": "^1.85.0"
   },
   "categories": [
@@ -36,7 +35,7 @@
       "activitybar": [
         {
           "id": "cmake-gui-sidebar",
-          "title": "CMake",
+          "title": "CMake Project Configuration/Build Helper",
           "icon": "resources/cmake-icon.svg"
         }
       ]
@@ -46,11 +45,12 @@
         {
           "type": "webview",
           "id": "cmake-gui.configuratorView",
-          "name": "CMake Configurator & Build",
+          "name": "CMake Project Configuration/Build Helper",
           "visibility": "visible"
         }
       ]
     },
+
     "commands": [
       {
         "command": "cmake-gui.scanProject",
