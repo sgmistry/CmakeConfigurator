@@ -1,0 +1,9 @@
+.vscode/**
+.vscode-test/**
+src/**
+test/**
+.bin/**
+.tools/**
+sample-project/build/**
+tsconfig.json
+**/*.map

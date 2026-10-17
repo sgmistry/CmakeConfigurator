@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.vsix
+.DS_Store
+sample-project/build/
+sample-project/out/
+*.log
+node_modules

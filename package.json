@@ -1,0 +1,170 @@
+{
+  "name": "cmake-gui-builder",
+  "displayName": "CMake Configurator & Build Panel",
+  "description": "Smart CMake project scanner, GUI configurator, and build panel with preset selection dropdowns",
+  "version": "1.0.0",
+  "publisher": "samir",
+  "icon": "resources/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Build Systems",
+    "Other"
+  ],
+  "keywords": [
+    "cmake",
+    "presets",
+    "build",
+    "configurator",
+    "c++",
+    "c"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/CMakeLists.txt",
+    "workspaceContains:**/CMakePresets.json",
+    "onCommand:cmake-gui.scanProject",
+    "onCommand:cmake-gui.openPanel",
+    "onView:cmake-gui.configuratorView"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "cmake-gui-sidebar",
+          "title": "CMake",
+          "icon": "resources/cmake-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "cmake-gui-sidebar": [
+        {
+          "type": "webview",
+          "id": "cmake-gui.configuratorView",
+          "name": "CMake Configurator & Build",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "cmake-gui.scanProject",
+        "title": "CMake: Scan Project & Reload Presets",
+        "category": "CMake",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "cmake-gui.openPanel",
+        "title": "CMake: Open Configurator & Build Panel",
+        "category": "CMake",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "cmake-gui.configure",
+        "title": "CMake: Configure Project",
+        "category": "CMake",
+        "icon": "$(symbol-property)"
+      },
+      {
+        "command": "cmake-gui.build",
+        "title": "CMake: Build Active Target",
+        "category": "CMake",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "cmake-gui.clean",
+        "title": "CMake: Clean Build",
+        "category": "CMake",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "cmake-gui.test",
+        "title": "CMake: Run CTest",
+        "category": "CMake",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "cmake-gui.stop",
+        "title": "CMake: Stop Current Process",
+        "category": "CMake",
+        "icon": "$(primitive-square)"
+      },
+      {
+        "command": "cmake-gui.selectConfigurePreset",
+        "title": "CMake: Select Configure Preset",
+        "category": "CMake"
+      },
+      {
+        "command": "cmake-gui.selectBuildPreset",
+        "title": "CMake: Select Build Preset",
+        "category": "CMake"
+      },
+      {
+        "command": "cmake-gui.createSamplePresets",
+        "title": "CMake: Scaffold CMakePresets.json",
+        "category": "CMake"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "cmake-gui.scanProject",
+          "when": "view == cmake-gui.configuratorView",
+          "group": "navigation"
+        },
+        {
+          "command": "cmake-gui.createSamplePresets",
+          "when": "view == cmake-gui.configuratorView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "CMake GUI Configurator",
+      "properties": {
+        "cmakeGui.cmakePath": {
+          "type": "string",
+          "default": "cmake",
+          "description": "Path to the cmake executable"
+        },
+        "cmakeGui.ctestPath": {
+          "type": "string",
+          "default": "ctest",
+          "description": "Path to the ctest executable"
+        },
+        "cmakeGui.autoScanOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan workspace for CMake projects when opened"
+        },
+        "cmakeGui.runInTerminal": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run CMake commands in integrated terminal instead of Output Channel"
+        },
+        "cmakeGui.parallelJobs": {
+          "type": "number",
+          "default": 0,
+          "description": "Number of parallel jobs for build (0 = auto-detect based on CPU cores)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "bundle": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.3.3"
+  }
+}
