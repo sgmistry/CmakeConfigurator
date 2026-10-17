@@ -132,6 +132,15 @@ This generates `cmake-gui-builder-1.0.0.vsix` in the workspace root.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+---
+
+## ⚖️ Trademarks & Disclaimers
+
+- **CMake** is a registered trademark of [Kitware, Inc.](https://www.kitware.com/). This extension is an independent open-source project and is not affiliated with, endorsed by, or sponsored by Kitware, Inc.
+- **Visual Studio Code** and **VS Code** are trademarks of [Microsoft Corporation](https://www.microsoft.com/).
+- All other trademarks and logos are property of their respective owners.
+
+
 
 
 
