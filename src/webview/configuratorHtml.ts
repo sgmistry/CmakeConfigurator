@@ -1,14 +1,13 @@
 import * as vscode from 'vscode';
 
 export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): string {
-  // Use a nonce to whitelist which scripts can be run
   const nonce = getNonce();
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'unsafe-inline' 'nonce-${nonce}';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CMake Configurator & Build</title>
   <style>
@@ -38,14 +37,14 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       display: flex;
       border-bottom: 1px solid var(--vscode-panel-border, #333);
       margin-bottom: 12px;
-      gap: 2px;
+      gap: 4px;
     }
 
     .tab-btn {
       background: none;
       border: none;
       color: var(--vscode-descriptionForeground);
-      padding: 6px 10px;
+      padding: 7px 10px;
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
@@ -60,7 +59,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     }
 
     .tab-btn.active {
-      color: var(--vscode-panelTitle-activeForeground, #fff);
+      color: var(--vscode-panelTitle-activeForeground, #ffffff);
       border-bottom: 2px solid var(--vscode-panelTitle-activeBorder, var(--vscode-focusBorder));
     }
 
@@ -72,7 +71,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       display: block;
     }
 
-    /* Cards and Sections */
+    /* Sections and Field Groups */
     .section {
       margin-bottom: 14px;
     }
@@ -106,7 +105,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       margin-top: 2px;
     }
 
-    /* Select, Input, Buttons */
+    /* Form Controls */
     select, input[type="text"] {
       width: 100%;
       height: var(--control-height);
@@ -179,7 +178,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       cursor: not-allowed;
     }
 
-    /* Info card */
+    /* Summary Card */
     .info-card {
       background: var(--vscode-editor-inactiveSelectionBackground, rgba(128, 128, 128, 0.1));
       border: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.2));
@@ -199,7 +198,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     }
 
     .info-key {
-      width: 90px;
+      width: 85px;
       font-weight: 600;
       color: var(--vscode-descriptionForeground);
       flex-shrink: 0;
@@ -211,7 +210,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       font-family: var(--vscode-editor-font-family, monospace);
     }
 
-    /* Status indicator */
     .status-badge {
       display: inline-block;
       padding: 2px 6px;
@@ -225,7 +223,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     .status-running { background: rgba(0, 122, 255, 0.2); color: #5ac8fa; }
     .status-error { background: rgba(255, 59, 48, 0.2); color: #ff3b30; }
 
-    /* REAL TERMINAL VIEW STYLES */
+    /* REAL TERMINAL VIEW */
     .terminal-card {
       background: var(--vscode-terminal-background, #121212);
       border: 1px solid var(--vscode-widget-border, #2a2a2a);
@@ -263,25 +261,14 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       transition: background 0.3s;
     }
 
-    .term-dot.idle {
-      background: #6e7681;
-    }
-
+    .term-dot.idle { background: #6e7681; }
     .term-dot.running {
       background: #58a6ff;
       box-shadow: 0 0 6px #58a6ff;
       animation: pulse-dot 1.2s infinite;
     }
-
-    .term-dot.success {
-      background: #3fb950;
-      box-shadow: 0 0 4px #3fb950;
-    }
-
-    .term-dot.error {
-      background: #f85149;
-      box-shadow: 0 0 4px #f85149;
-    }
+    .term-dot.success { background: #3fb950; box-shadow: 0 0 4px #3fb950; }
+    .term-dot.error { background: #f85149; box-shadow: 0 0 4px #f85149; }
 
     @keyframes pulse-dot {
       0% { transform: scale(0.9); opacity: 0.7; }
@@ -332,20 +319,20 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     .terminal-prompt-line {
       color: var(--vscode-terminal-ansiCyan, #56b6c2);
       font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .terminal-status-footer {
       background: var(--vscode-sideBarSectionHeader-background, #1a1a1a);
       border-top: 1px solid var(--vscode-widget-border, #2a2a2a);
-      padding: 3px 10px;
+      padding: 4px 10px;
       font-size: 10px;
       display: flex;
       justify-content: space-between;
       color: var(--vscode-descriptionForeground);
     }
 
-    /* Cache Table & Search */
+    /* CACHE CONFIGURATOR STYLES */
     .cache-filter-bar {
       display: flex;
       gap: 6px;
@@ -367,6 +354,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       font-size: 10px;
       cursor: pointer;
       user-select: none;
+      border: 1px solid transparent;
     }
 
     .filter-pill.active {
@@ -379,14 +367,15 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       overflow-y: auto;
       border: 1px solid var(--vscode-widget-border, #333);
       border-radius: var(--border-radius);
+      background: var(--vscode-editor-background);
     }
 
     .cache-item {
-      padding: 8px;
+      padding: 8px 10px;
       border-bottom: 1px solid var(--vscode-widget-border, #222);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
     }
 
     .cache-item:last-child {
@@ -408,10 +397,11 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
 
     .cache-type {
       font-size: 9px;
-      padding: 1px 4px;
+      padding: 1px 5px;
       border-radius: 3px;
       background: var(--vscode-badge-background, #222);
       color: var(--vscode-badge-foreground, #aaa);
+      font-weight: 600;
     }
 
     .cache-help {
@@ -425,6 +415,8 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       align-items: center;
       gap: 8px;
       cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
     }
 
     .empty-state {
@@ -438,9 +430,9 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
 
   <!-- Tab Navigation -->
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('build')">Build & Presets</button>
-    <button class="tab-btn" onclick="switchTab('cache')">Configurator</button>
-    <button class="tab-btn" onclick="switchTab('terminal')">Terminal</button>
+    <button class="tab-btn active" data-tab="build" id="tab-btn-build">Build & Presets</button>
+    <button class="tab-btn" data-tab="cache" id="tab-btn-cache">Configurator</button>
+    <button class="tab-btn" data-tab="terminal" id="tab-btn-terminal">Logs & Terminal</button>
   </div>
 
   <!-- TAB 1: Build & Presets -->
@@ -449,9 +441,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     <!-- Project Selector -->
     <div class="field-group" id="project-group">
       <label class="field-label" for="project-select">Active CMake Project</label>
-      <select id="project-select" onchange="onProjectChange()">
-        <!-- Filled dynamically -->
-      </select>
+      <select id="project-select"></select>
     </div>
 
     <!-- Configure Preset Dropdown -->
@@ -460,33 +450,27 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
         Configure Preset
         <span id="preset-count" style="float: right; color: var(--vscode-descriptionForeground); font-weight: normal; font-size: 10px;"></span>
       </label>
-      <select id="configure-preset-select" onchange="onConfigurePresetChange()">
-        <!-- Filled dynamically -->
-      </select>
+      <select id="configure-preset-select"></select>
       <div class="field-desc" id="configure-preset-desc">Select a preset from CMakePresets.json</div>
     </div>
 
     <!-- Build Preset Dropdown -->
     <div class="field-group">
       <label class="field-label" for="build-preset-select">Build Preset</label>
-      <select id="build-preset-select" onchange="onBuildPresetChange()">
-        <!-- Filled dynamically -->
-      </select>
+      <select id="build-preset-select"></select>
     </div>
 
     <!-- Target Dropdown -->
     <div class="field-group">
       <label class="field-label" for="target-select">Build Target</label>
-      <select id="target-select" onchange="onTargetChange()">
-        <!-- Filled dynamically -->
-      </select>
+      <select id="target-select"></select>
     </div>
 
-    <!-- Custom Config Fields (fallback if no presets) -->
+    <!-- Fallback config fields -->
     <div id="custom-config-fields" style="display: none;">
       <div class="field-group">
         <label class="field-label" for="config-select">Build Type</label>
-        <select id="config-select" onchange="onConfigChange()">
+        <select id="config-select">
           <option value="Debug">Debug</option>
           <option value="Release">Release</option>
           <option value="RelWithDebInfo">RelWithDebInfo</option>
@@ -496,11 +480,20 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
 
       <div class="field-group">
         <label class="field-label" for="generator-select">Generator</label>
-        <select id="generator-select" onchange="onGeneratorChange()">
+        <select id="generator-select">
           <option value="Ninja">Ninja</option>
           <option value="Unix Makefiles">Unix Makefiles</option>
           <option value="Visual Studio 17 2022">Visual Studio 17 2022</option>
         </select>
+      </div>
+    </div>
+
+    <!-- Execution Target Switcher -->
+    <div style="margin-bottom: 12px; padding: 6px 10px; background: var(--vscode-editor-inactiveSelectionBackground, rgba(128,128,128,0.1)); border-radius: var(--border-radius); border: 1px solid var(--vscode-widget-border, #333); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 11px; font-weight: 600;">Execute in:</span>
+      <div style="display: flex; gap: 4px;">
+        <button id="mode-plugin-btn" class="term-tool-btn" style="padding: 3px 8px; border-radius: 10px; font-weight: 600;">Plugin View</button>
+        <button id="mode-builtin-btn" class="term-tool-btn" style="padding: 3px 8px; border-radius: 10px; font-weight: 600;">🖥️ VS Code Terminal</button>
       </div>
     </div>
 
@@ -512,21 +505,11 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       </div>
 
       <div class="actions-grid">
-        <button id="btn-configure" class="btn btn-primary" onclick="runConfigure()">
-          ⚡ Configure
-        </button>
-        <button id="btn-build" class="btn btn-primary" onclick="runBuild()">
-          🔨 Build
-        </button>
-        <button id="btn-clean" class="btn btn-secondary" onclick="runClean()">
-          🧹 Clean
-        </button>
-        <button id="btn-test" class="btn btn-secondary" onclick="runTest()">
-          🧪 Test
-        </button>
-        <button id="btn-stop" class="btn btn-danger btn-block" style="display: none;" onclick="stopProcess()">
-          ⏹️ Cancel Process
-        </button>
+        <button id="btn-configure" class="btn btn-primary">⚡ Configure</button>
+        <button id="btn-build" class="btn btn-primary">🔨 Build</button>
+        <button id="btn-clean" class="btn btn-secondary">🧹 Clean</button>
+        <button id="btn-test" class="btn btn-secondary">🧪 Test</button>
+        <button id="btn-stop" class="btn btn-danger btn-block" style="display: none;">⏹️ Cancel Process</button>
       </div>
     </div>
 
@@ -539,9 +522,9 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
           <span id="term-timer" style="font-weight: normal; font-size: 10px; opacity: 0.8;"></span>
         </div>
         <div class="terminal-toolbar">
-          <button class="term-tool-btn" onclick="clearLogs()" title="Clear terminal output">🧹 Clear</button>
-          <button class="term-tool-btn" onclick="copyTerminalText()" title="Copy output">📋 Copy</button>
-          <button class="term-tool-btn" onclick="openVsCodeTerminal()" title="Open in VS Code Bottom Terminal Panel">🖥️ Terminal</button>
+          <button class="term-tool-btn" id="btn-term-clear" title="Clear terminal">🧹 Clear</button>
+          <button class="term-tool-btn" id="btn-term-copy" title="Copy output">📋 Copy</button>
+          <button class="term-tool-btn" id="btn-term-vscode" title="Open VS Code bottom terminal">🖥️ Terminal</button>
         </div>
       </div>
       <div id="plugin-terminal-body" class="terminal-viewport">
@@ -578,9 +561,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       <div style="margin-bottom: 8px; color: var(--vscode-descriptionForeground);">
         CMakePresets.json allows sharing build configurations across your team and tools.
       </div>
-      <button class="btn btn-secondary btn-block" onclick="scaffoldPresets()">
-        Scaffold CMakePresets.json
-      </button>
+      <button class="btn btn-secondary btn-block" id="btn-scaffold-presets">Scaffold CMakePresets.json</button>
     </div>
 
   </div>
@@ -589,20 +570,18 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
   <div id="tab-cache" class="tab-pane">
     <div class="field-group">
       <div class="cache-filter-bar">
-        <input type="text" id="cache-search" placeholder="Filter variables..." oninput="filterCache()">
+        <input type="text" id="cache-search" placeholder="Filter variables...">
       </div>
       <div class="cache-filter-pills">
-        <span class="filter-pill active" onclick="setFilterType('ALL', this)">All</span>
-        <span class="filter-pill" onclick="setFilterType('BOOL', this)">Booleans</span>
-        <span class="filter-pill" onclick="setFilterType('PATH', this)">Paths</span>
-        <span class="filter-pill" onclick="setFilterType('STRING', this)">Strings</span>
-        <span class="filter-pill" onclick="toggleAdvanced(this)">Show Advanced</span>
+        <span class="filter-pill active" data-filter="ALL" id="pill-all">All</span>
+        <span class="filter-pill" data-filter="BOOL" id="pill-bool">Booleans</span>
+        <span class="filter-pill" data-filter="PATH" id="pill-path">Paths</span>
+        <span class="filter-pill" data-filter="STRING" id="pill-string">Strings</span>
+        <span class="filter-pill" id="pill-advanced">Show Advanced</span>
       </div>
     </div>
 
-    <div id="cache-list" class="cache-list">
-      <!-- Filled dynamically -->
-    </div>
+    <div id="cache-list" class="cache-list"></div>
 
     <!-- Add Variable section -->
     <div class="section" style="margin-top: 14px;">
@@ -618,7 +597,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       </div>
       <div style="display: flex; gap: 4px;">
         <input type="text" id="new-var-value" placeholder="Value (e.g. ON, /path/to/dir)" style="flex: 3;">
-        <button class="btn btn-secondary" onclick="addCacheEntry()" style="flex: 1;">Add</button>
+        <button class="btn btn-secondary" id="btn-add-cache-var" style="flex: 1;">Add</button>
       </div>
     </div>
   </div>
@@ -632,9 +611,9 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
           <span>Full Terminal Console</span>
         </div>
         <div class="terminal-toolbar">
-          <button class="term-tool-btn" onclick="clearLogs()">🧹 Clear</button>
-          <button class="term-tool-btn" onclick="copyTerminalText()">📋 Copy</button>
-          <button class="term-tool-btn" onclick="openVsCodeTerminal()">🖥️ VS Code Terminal</button>
+          <button class="term-tool-btn" id="btn-full-term-clear">🧹 Clear</button>
+          <button class="term-tool-btn" id="btn-full-term-copy">📋 Copy</button>
+          <button class="term-tool-btn" id="btn-full-term-vscode">🖥️ VS Code Terminal</button>
         </div>
       </div>
       <div id="full-terminal-body" class="terminal-viewport" style="height: 100%;">
@@ -660,6 +639,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       buildDir: '',
       cacheEntries: [],
       isProcessRunning: false,
+      runInBuiltinTerminal: false,
       currentProcessName: '',
       lastCommand: ''
     };
@@ -668,7 +648,12 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     let showAdvanced = false;
     let timerInterval = null;
     let startTime = 0;
+    let terminalLogBuffer = '';
 
+    // Initialize listeners immediately
+    setupEventListeners();
+
+    // Tell extension we are ready
     vscode.postMessage({ command: 'ready' });
 
     window.addEventListener('message', event => {
@@ -693,101 +678,160 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       }
     });
 
+    function setupEventListeners() {
+      // Tab switching
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-tab');
+          if (tab) switchTab(tab);
+        });
+      });
+
+      // Actions
+      document.getElementById('btn-configure')?.addEventListener('click', runConfigure);
+      document.getElementById('btn-build')?.addEventListener('click', runBuild);
+      document.getElementById('btn-clean')?.addEventListener('click', runClean);
+      document.getElementById('btn-test')?.addEventListener('click', runTest);
+      document.getElementById('btn-stop')?.addEventListener('click', stopProcess);
+      document.getElementById('btn-scaffold-presets')?.addEventListener('click', scaffoldPresets);
+
+      // Terminal modes
+      document.getElementById('mode-plugin-btn')?.addEventListener('click', () => setTerminalTarget(false));
+      document.getElementById('mode-builtin-btn')?.addEventListener('click', () => setTerminalTarget(true));
+
+      // Terminal toolbar buttons
+      document.getElementById('btn-term-clear')?.addEventListener('click', clearLogs);
+      document.getElementById('btn-term-copy')?.addEventListener('click', copyTerminalText);
+      document.getElementById('btn-term-vscode')?.addEventListener('click', openVsCodeTerminal);
+
+      document.getElementById('btn-full-term-clear')?.addEventListener('click', clearLogs);
+      document.getElementById('btn-full-term-copy')?.addEventListener('click', copyTerminalText);
+      document.getElementById('btn-full-term-vscode')?.addEventListener('click', openVsCodeTerminal);
+
+      // Dropdowns
+      document.getElementById('project-select')?.addEventListener('change', onProjectChange);
+      document.getElementById('configure-preset-select')?.addEventListener('change', onConfigurePresetChange);
+      document.getElementById('build-preset-select')?.addEventListener('change', onBuildPresetChange);
+      document.getElementById('target-select')?.addEventListener('change', onTargetChange);
+      document.getElementById('config-select')?.addEventListener('change', onConfigChange);
+      document.getElementById('generator-select')?.addEventListener('change', onGeneratorChange);
+
+      // Configurator filter & add
+      document.getElementById('cache-search')?.addEventListener('input', filterCache);
+      document.getElementById('pill-all')?.addEventListener('click', (e) => setFilterType('ALL', e.currentTarget));
+      document.getElementById('pill-bool')?.addEventListener('click', (e) => setFilterType('BOOL', e.currentTarget));
+      document.getElementById('pill-path')?.addEventListener('click', (e) => setFilterType('PATH', e.currentTarget));
+      document.getElementById('pill-string')?.addEventListener('click', (e) => setFilterType('STRING', e.currentTarget));
+      document.getElementById('pill-advanced')?.addEventListener('click', (e) => toggleAdvanced(e.currentTarget));
+      document.getElementById('btn-add-cache-var')?.addEventListener('click', addCacheEntry);
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
 
       if (tabId === 'build') {
-        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
-        document.getElementById('tab-build').classList.add('active');
+        document.getElementById('tab-btn-build')?.classList.add('active');
+        document.getElementById('tab-build')?.classList.add('active');
       } else if (tabId === 'cache') {
-        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-        document.getElementById('tab-cache').classList.add('active');
+        document.getElementById('tab-btn-cache')?.classList.add('active');
+        document.getElementById('tab-cache')?.classList.add('active');
         renderCacheList();
-      } else if (tabId === 'terminal') {
-        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
-        document.getElementById('tab-terminal').classList.add('active');
+      } else if (tabId === 'terminal' || tabId === 'logs' || tabId === 'output') {
+        document.getElementById('tab-btn-terminal')?.classList.add('active');
+        document.getElementById('tab-terminal')?.classList.add('active');
+        const fullTerm = document.getElementById('full-terminal-body');
+        if (fullTerm) fullTerm.scrollTop = fullTerm.scrollHeight;
       }
     }
 
     function renderUI() {
       // 1. Project select
       const projSelect = document.getElementById('project-select');
-      projSelect.innerHTML = '';
-      if (state.projects && state.projects.length > 0) {
-        state.projects.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.id;
-          opt.textContent = p.name;
-          if (p.id === state.activeProjectId) opt.selected = true;
-          projSelect.appendChild(opt);
-        });
-        document.getElementById('project-group').style.display = state.projects.length > 1 ? 'block' : 'none';
+      if (projSelect) {
+        projSelect.innerHTML = '';
+        if (state.projects && state.projects.length > 0) {
+          state.projects.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name;
+            if (p.id === state.activeProjectId) opt.selected = true;
+            projSelect.appendChild(opt);
+          });
+          document.getElementById('project-group').style.display = state.projects.length > 1 ? 'block' : 'none';
+        }
       }
 
       // 2. Configure presets select
       const confSelect = document.getElementById('configure-preset-select');
-      confSelect.innerHTML = '';
+      if (confSelect) {
+        confSelect.innerHTML = '';
+        const activeProject = state.projects.find(p => p.id === state.activeProjectId);
+        const hasPresets = state.configurePresets && state.configurePresets.length > 0;
 
-      const activeProject = state.projects.find(p => p.id === state.activeProjectId);
-      const hasPresets = state.configurePresets && state.configurePresets.length > 0;
+        document.getElementById('no-presets-card').style.display = (!hasPresets && activeProject) ? 'block' : 'none';
+        document.getElementById('custom-config-fields').style.display = !hasPresets ? 'block' : 'none';
 
-      document.getElementById('no-presets-card').style.display = (!hasPresets && activeProject) ? 'block' : 'none';
-      document.getElementById('custom-config-fields').style.display = !hasPresets ? 'block' : 'none';
-
-      if (hasPresets) {
-        state.configurePresets.forEach(preset => {
+        if (hasPresets) {
+          state.configurePresets.forEach(preset => {
+            const opt = document.createElement('option');
+            opt.value = preset.name;
+            opt.textContent = preset.displayName ? \`\${preset.displayName} (\${preset.name})\` : preset.name;
+            if (preset.name === state.activeConfigurePreset) opt.selected = true;
+            confSelect.appendChild(opt);
+          });
+          document.getElementById('preset-count').textContent = \`\${state.configurePresets.length} presets\`;
+          
+          const activePreset = state.configurePresets.find(p => p.name === state.activeConfigurePreset);
+          document.getElementById('configure-preset-desc').textContent = 
+            activePreset?.description || (activePreset?.generator ? \`Generator: \${activePreset.generator}\` : 'CMake Configure Preset');
+        } else {
           const opt = document.createElement('option');
-          opt.value = preset.name;
-          opt.textContent = preset.displayName ? \`\${preset.displayName} (\${preset.name})\` : preset.name;
-          if (preset.name === state.activeConfigurePreset) opt.selected = true;
+          opt.value = 'default';
+          opt.textContent = '(Default Custom)';
           confSelect.appendChild(opt);
-        });
-        document.getElementById('preset-count').textContent = \`\${state.configurePresets.length} presets\`;
-        
-        const activePreset = state.configurePresets.find(p => p.name === state.activeConfigurePreset);
-        document.getElementById('configure-preset-desc').textContent = 
-          activePreset?.description || (activePreset?.generator ? \`Generator: \${activePreset.generator}\` : 'CMake Configure Preset');
-      } else {
-        const opt = document.createElement('option');
-        opt.value = 'default';
-        opt.textContent = '(Default Custom)';
-        confSelect.appendChild(opt);
-        document.getElementById('preset-count').textContent = 'No presets';
-        document.getElementById('configure-preset-desc').textContent = 'Using custom CMake settings';
+          document.getElementById('preset-count').textContent = 'No presets';
+          document.getElementById('configure-preset-desc').textContent = 'Using custom CMake settings';
+        }
       }
 
       // 3. Build preset select
       const buildSelect = document.getElementById('build-preset-select');
-      buildSelect.innerHTML = '';
-      const defaultBuildOpt = document.createElement('option');
-      defaultBuildOpt.value = '';
-      defaultBuildOpt.textContent = '(Use Configure Preset Default)';
-      buildSelect.appendChild(defaultBuildOpt);
+      if (buildSelect) {
+        buildSelect.innerHTML = '';
+        const defaultBuildOpt = document.createElement('option');
+        defaultBuildOpt.value = '';
+        defaultBuildOpt.textContent = '(Use Configure Preset Default)';
+        buildSelect.appendChild(defaultBuildOpt);
 
-      if (state.buildPresets && state.buildPresets.length > 0) {
-        state.buildPresets.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.name;
-          opt.textContent = p.displayName ? \`\${p.displayName} (\${p.name})\` : p.name;
-          if (p.name === state.activeBuildPreset) opt.selected = true;
-          buildSelect.appendChild(opt);
-        });
+        if (state.buildPresets && state.buildPresets.length > 0) {
+          state.buildPresets.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.name;
+            opt.textContent = p.displayName ? \`\${p.displayName} (\${p.name})\` : p.name;
+            if (p.name === state.activeBuildPreset) opt.selected = true;
+            buildSelect.appendChild(opt);
+          });
+        }
       }
 
       // 4. Target select
       const targetSelect = document.getElementById('target-select');
-      targetSelect.innerHTML = '';
-      const targets = activeProject?.targets || ['all'];
-      targets.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t;
-        opt.textContent = t === 'all' ? 'all (Build entire project)' : t;
-        if (t === state.activeTarget) opt.selected = true;
-        targetSelect.appendChild(opt);
-      });
+      if (targetSelect) {
+        targetSelect.innerHTML = '';
+        const activeProject = state.projects.find(p => p.id === state.activeProjectId);
+        const targets = activeProject?.targets || ['all'];
+        targets.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = t === 'all' ? 'all (Build entire project)' : t;
+          if (t === state.activeTarget) opt.selected = true;
+          targetSelect.appendChild(opt);
+        });
+      }
 
       // 5. Update summary
+      const activeProject = state.projects.find(p => p.id === state.activeProjectId);
       if (activeProject) {
         document.getElementById('summary-source-dir').textContent = activeProject.sourceDir;
       }
@@ -795,7 +839,32 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       document.getElementById('summary-command').textContent = state.lastCommand || 'cmake --preset ' + (state.activeConfigurePreset || 'default');
 
       updateProcessState();
+      updateTerminalModeUI();
       renderCacheList();
+    }
+
+    function updateTerminalModeUI() {
+      const pluginBtn = document.getElementById('mode-plugin-btn');
+      const builtinBtn = document.getElementById('mode-builtin-btn');
+      if (!pluginBtn || !builtinBtn) return;
+
+      if (state.runInBuiltinTerminal) {
+        builtinBtn.style.background = 'var(--vscode-button-background)';
+        builtinBtn.style.color = 'var(--vscode-button-foreground)';
+        pluginBtn.style.background = 'transparent';
+        pluginBtn.style.color = 'var(--vscode-descriptionForeground)';
+      } else {
+        pluginBtn.style.background = 'var(--vscode-button-background)';
+        pluginBtn.style.color = 'var(--vscode-button-foreground)';
+        builtinBtn.style.background = 'transparent';
+        builtinBtn.style.color = 'var(--vscode-descriptionForeground)';
+      }
+    }
+
+    function setTerminalTarget(builtin) {
+      state.runInBuiltinTerminal = builtin;
+      updateTerminalModeUI();
+      vscode.postMessage({ command: 'setTerminalMode', builtin });
     }
 
     function updateProcessState() {
@@ -832,7 +901,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       state.lastCommand = command;
       updateProcessState();
 
-      // Update terminal headers
       const dot1 = document.getElementById('term-status-dot');
       const dot2 = document.getElementById('full-term-status-dot');
       if (dot1) dot1.className = 'term-dot running';
@@ -842,7 +910,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       document.getElementById('term-footer-status').textContent = \`Executing: \${name}\`;
       document.getElementById('term-footer-cmd').textContent = command;
 
-      // Start elapsed timer
       startTime = Date.now();
       clearInterval(timerInterval);
       timerInterval = setInterval(() => {
@@ -850,13 +917,12 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
         document.getElementById('term-timer').textContent = \`(\${elapsed}s)\`;
       }, 100);
 
-      // Append command prompt to terminal
       const promptHtml = \`<div class="terminal-prompt-line" style="margin-top: 8px;">$ \${escapeHtml(command)}</div>\`;
       appendHtmlToTerminals(promptHtml);
 
       // Scroll terminal view into view smoothly
       const termCard = document.getElementById('plugin-terminal-card');
-      if (termCard) {
+      if (termCard && !state.runInBuiltinTerminal) {
         termCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }
@@ -888,6 +954,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
 
     function appendLog(rawText) {
       const formatted = ansiToHtml(rawText);
+      terminalLogBuffer += rawText;
       appendHtmlToTerminals(formatted);
     }
 
@@ -906,6 +973,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     }
 
     function clearLogs() {
+      terminalLogBuffer = '';
       const inlineTerm = document.getElementById('plugin-terminal-body');
       const fullTerm = document.getElementById('full-terminal-body');
       if (inlineTerm) inlineTerm.innerHTML = '<div class="terminal-prompt-line">$ Terminal cleared.</div>';
@@ -920,7 +988,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     function copyTerminalText() {
       const inlineTerm = document.getElementById('plugin-terminal-body');
       if (inlineTerm) {
-        navigator.clipboard.writeText(inlineTerm.innerText);
+        navigator.clipboard.writeText(inlineTerm.innerText || terminalLogBuffer);
       }
     }
 
@@ -931,7 +999,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     function ansiToHtml(text) {
       let html = escapeHtml(text);
 
-      // Convert common ANSI color codes to styled HTML
       html = html
         .replace(/\\x1b\\[0?m/g, '</span>')
         .replace(/\\x1b\\[1m/g, '<span style="font-weight:bold;">')
@@ -944,7 +1011,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
         .replace(/\\x1b\\[36m/g, '<span style="color: #36cfc9;">')
         .replace(/\\x1b\\[37m/g, '<span style="color: #ffffff;">')
         .replace(/\\x1b\\[90m/g, '<span style="color: #8c8c8c;">')
-        .replace(/\\x1b\\[[0-9;]*m/g, ''); // strip remaining ANSI sequences
+        .replace(/\\x1b\\[[0-9;]*m/g, '');
 
       return html;
     }
@@ -1010,11 +1077,11 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       vscode.postMessage({ command: 'scaffoldPresets' });
     }
 
-    // Cache list handling
+    /* CONFIGURATOR CACHE LIST */
     function setFilterType(type, element) {
       activeFilterType = type;
       document.querySelectorAll('.filter-pill').forEach(p => {
-        if (p !== element && !p.textContent.includes('Advanced')) p.classList.remove('active');
+        if (!p.id.includes('advanced')) p.classList.remove('active');
       });
       element.classList.add('active');
       renderCacheList();
@@ -1048,7 +1115,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       if (filtered.length === 0) {
         listContainer.innerHTML = \`
           <div class="empty-state">
-            <div>\${entries.length === 0 ? 'No CMakeCache.txt found. Run "Configure" first!' : 'No variables match current filter.'}</div>
+            <div>\${entries.length === 0 ? 'No configurable cache variables found. Select a preset or run Configure.' : 'No variables match the search filter.'}</div>
           </div>
         \`;
         return;
@@ -1087,25 +1154,26 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
           checkbox.checked = entry.value === '1' || entry.value.toUpperCase() === 'ON' || entry.value.toUpperCase() === 'TRUE';
-          checkbox.onchange = () => {
-            const newVal = checkbox.checked ? 'ON' : 'OFF';
-            vscode.postMessage({ command: 'updateCacheEntry', name: entry.name, value: newVal, type: 'BOOL' });
-          };
 
-          const text = document.createElement('span');
-          text.textContent = checkbox.checked ? 'ON' : 'OFF';
-          checkbox.addEventListener('change', () => { text.textContent = checkbox.checked ? 'ON' : 'OFF'; });
+          const textSpan = document.createElement('span');
+          textSpan.textContent = checkbox.checked ? 'ON' : 'OFF';
+
+          checkbox.addEventListener('change', () => {
+            const newVal = checkbox.checked ? 'ON' : 'OFF';
+            textSpan.textContent = newVal;
+            vscode.postMessage({ command: 'updateCacheEntry', name: entry.name, value: newVal, type: 'BOOL' });
+          });
 
           toggleLabel.appendChild(checkbox);
-          toggleLabel.appendChild(text);
+          toggleLabel.appendChild(textSpan);
           item.appendChild(toggleLabel);
         } else {
           const input = document.createElement('input');
           input.type = 'text';
           input.value = entry.value;
-          input.onchange = () => {
+          input.addEventListener('change', () => {
             vscode.postMessage({ command: 'updateCacheEntry', name: entry.name, value: input.value, type: entry.type });
-          };
+          });
           item.appendChild(input);
         }
 

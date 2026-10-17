@@ -32,7 +32,8 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
     availableConfigurations: ['Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel'],
     buildDir: '',
     cacheEntries: [],
-    isProcessRunning: false
+    isProcessRunning: false,
+    runInBuiltinTerminal: vscode.workspace.getConfiguration('cmakeGui').get<boolean>('runInTerminal', false)
   };
 
   constructor(
@@ -206,16 +207,71 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
     this.state.buildDir = path.join(project.sourceDir, 'build');
   }
 
+  private customCacheOverrides: Map<string, { type: string; value: string }> = new Map();
+
   private reloadCacheEntries(): void {
+    const entriesMap = new Map<string, import('./types.js').CMakeCacheEntry>();
+
+    // 1. If active configure preset has cacheVariables, load them first!
+    if (this.state.activeConfigurePreset) {
+      const preset = this.state.configurePresets.find(p => p.name === this.state.activeConfigurePreset);
+      if (preset && preset.cacheVariables) {
+        for (const [key, val] of Object.entries(preset.cacheVariables)) {
+          let strVal = '';
+          let varType: import('./types.js').CMakeCacheEntry['type'] = 'STRING';
+
+          if (typeof val === 'boolean') {
+            varType = 'BOOL';
+            strVal = val ? 'ON' : 'OFF';
+          } else if (typeof val === 'string') {
+            varType = (val === 'ON' || val === 'OFF' || val === 'TRUE' || val === 'FALSE') ? 'BOOL' : 'STRING';
+            strVal = val;
+          } else if (typeof val === 'object' && val !== null) {
+            strVal = String((val as any).value ?? '');
+            varType = ((val as any).type as import('./types.js').CMakeCacheEntry['type']) || 'STRING';
+          }
+
+          entriesMap.set(key, {
+            name: key,
+            type: varType,
+            value: strVal,
+            help: `Defined in preset "${preset.name}"`,
+            advanced: false
+          });
+        }
+      }
+    }
+
+    // 2. If CMakeCache.txt exists on disk, parse and merge
     if (this.state.buildDir) {
       const cacheFile = path.join(this.state.buildDir, 'CMakeCache.txt');
       if (fs.existsSync(cacheFile)) {
-        this.state.cacheEntries = CacheParser.parse(cacheFile);
-        return;
+        const diskEntries = CacheParser.parse(cacheFile);
+        for (const entry of diskEntries) {
+          entriesMap.set(entry.name, entry);
+        }
       }
     }
-    this.state.cacheEntries = [];
+
+    // 3. Overlay any live user modifications
+    for (const [key, ov] of this.customCacheOverrides.entries()) {
+      const existing = entriesMap.get(key);
+      if (existing) {
+        existing.value = ov.value;
+      } else {
+        entriesMap.set(key, {
+          name: key,
+          type: ov.type as import('./types.js').CMakeCacheEntry['type'],
+          value: ov.value,
+          help: 'Custom user variable',
+          advanced: false
+        });
+      }
+    }
+
+    this.state.cacheEntries = Array.from(entriesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }
+
 
   private updateWebviewState(): void {
     if (this._view) {
@@ -300,23 +356,22 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
         this.runner.showOrOpenVsCodeTerminal(currentProj?.sourceDir);
         break;
 
-
-      case 'updateCacheEntry':
-        if (this.state.buildDir) {
-          const cacheFile = path.join(this.state.buildDir, 'CMakeCache.txt');
-          CacheParser.updateEntry(cacheFile, data.name, data.type, data.value);
-          this.reloadCacheEntries();
-          this.updateWebviewState();
-        }
+      case 'setTerminalMode':
+        this.state.runInBuiltinTerminal = data.builtin;
+        this.updateWebviewState();
         break;
 
+      case 'updateCacheEntry':
       case 'addCacheEntry':
+        this.customCacheOverrides.set(data.name, { type: data.type, value: data.value });
         if (this.state.buildDir) {
           const cacheFile = path.join(this.state.buildDir, 'CMakeCache.txt');
-          CacheParser.updateEntry(cacheFile, data.name, data.type, data.value);
-          this.reloadCacheEntries();
-          this.updateWebviewState();
+          if (fs.existsSync(cacheFile)) {
+            CacheParser.updateEntry(cacheFile, data.name, data.type, data.value);
+          }
         }
+        this.reloadCacheEntries();
+        this.updateWebviewState();
         break;
     }
   }
@@ -346,8 +401,14 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
       }
     }
 
-    await this.runner.runCommand('Configure', cmakePath, args, project.sourceDir);
+    // Append any user-configured cache variable overrides as -D flags
+    for (const [key, ov] of this.customCacheOverrides.entries()) {
+      args.push(`-D${key}:${ov.type}=${ov.value}`);
+    }
+
+    await this.runner.runCommand('Configure', cmakePath, args, project.sourceDir, undefined, this.state.runInBuiltinTerminal);
   }
+
 
   public async runBuild(): Promise<void> {
     const project = this.getActiveProject();
@@ -376,7 +437,7 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
       args.push('--parallel', parallelJobs.toString());
     }
 
-    await this.runner.runCommand('Build', cmakePath, args, project.sourceDir);
+    await this.runner.runCommand('Build', cmakePath, args, project.sourceDir, undefined, this.state.runInBuiltinTerminal);
   }
 
   public async runClean(): Promise<void> {
@@ -387,7 +448,7 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
     const cmakePath = config.get<string>('cmakePath', 'cmake');
 
     const args = ['--build', this.state.buildDir || path.join(project.sourceDir, 'build'), '--target', 'clean'];
-    await this.runner.runCommand('Clean', cmakePath, args, project.sourceDir);
+    await this.runner.runCommand('Clean', cmakePath, args, project.sourceDir, undefined, this.state.runInBuiltinTerminal);
   }
 
   public async runTest(): Promise<void> {
@@ -413,8 +474,9 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
       args.push('--output-on-failure');
     }
 
-    await this.runner.runCommand('CTest', ctestPath, args, project.sourceDir);
+    await this.runner.runCommand('CTest', ctestPath, args, project.sourceDir, undefined, this.state.runInBuiltinTerminal);
   }
+
 
   public async scaffoldPresets(): Promise<void> {
     const project = this.getActiveProject();

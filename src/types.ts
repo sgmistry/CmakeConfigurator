@@ -111,6 +111,7 @@ export interface ExtensionState {
   buildDir: string;
   cacheEntries: CMakeCacheEntry[];
   isProcessRunning: boolean;
+  runInBuiltinTerminal: boolean;
   currentProcessName?: string;
   lastCommand?: string;
   lastExitCode?: number;
@@ -135,7 +136,9 @@ export type WebviewMessage =
   | { command: 'openFile'; filePath: string }
   | { command: 'scaffoldPresets' }
   | { command: 'openTerminal' }
+  | { command: 'setTerminalMode'; builtin: boolean }
   | { command: 'updateCacheEntry'; name: string; value: string; type: string }
   | { command: 'addCacheEntry'; name: string; value: string; type: string };
+
 
 

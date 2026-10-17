@@ -41,7 +41,8 @@ export class CMakeRunner {
     executable: string,
     args: string[],
     cwd: string,
-    env?: NodeJS.ProcessEnv
+    env?: NodeJS.ProcessEnv,
+    forceBuiltinTerminal?: boolean
   ): Promise<ProcessRunResult> {
     if (this.isRunning) {
       vscode.window.showWarningMessage('A CMake process is already running. Please cancel it first.');
@@ -49,7 +50,7 @@ export class CMakeRunner {
     }
 
     const config = vscode.workspace.getConfiguration('cmakeGui');
-    const runInTerminal = config.get<boolean>('runInTerminal', false);
+    const runInTerminal = forceBuiltinTerminal !== undefined ? forceBuiltinTerminal : config.get<boolean>('runInTerminal', false);
 
     const fullCommand = `${executable} ${args.join(' ')}`;
     this.currentCommandString = fullCommand;
@@ -57,6 +58,7 @@ export class CMakeRunner {
     if (runInTerminal) {
       return this.runInVsCodeTerminal(commandName, fullCommand, cwd);
     }
+
 
     this.outputChannel.show(true);
     this.log(`\n======================================================`);
@@ -126,16 +128,20 @@ export class CMakeRunner {
    * Run the command in an integrated VS Code terminal
    */
   private runInVsCodeTerminal(name: string, command: string, cwd: string): Promise<ProcessRunResult> {
-    const term = vscode.window.createTerminal({
-      name: `CMake: ${name}`,
-      cwd
-    });
-    term.show(true);
-    term.sendText(command);
+    if (!this.sharedTerminal || this.sharedTerminal.exitStatus !== undefined) {
+      this.sharedTerminal = vscode.window.createTerminal({
+        name: 'CMake Build Terminal',
+        cwd
+      });
+    }
+    this.sharedTerminal.show(true);
+    this.sharedTerminal.sendText(command);
     this.onDidStartEmitter.fire({ name, command });
+    this.onDidOutputEmitter.fire(`[VS Code Built-in Terminal] Executing: ${command}\n`);
     this.onDidFinishEmitter.fire({ exitCode: 0, command });
     return Promise.resolve({ exitCode: 0, command });
   }
+
 
   private sharedTerminal: vscode.Terminal | null = null;
 
