@@ -126,4 +126,12 @@ This generates `cmake-gui-builder-1.0.0.vsix` in the workspace root.
 - A new **Extension Development Host** window will open with `sample-project` pre-loaded.
 - Click the **CMake** icon on the Activity Bar to test the panel, dropdowns, and build actions live.
 
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+
+
 
