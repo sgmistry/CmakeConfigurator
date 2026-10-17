@@ -74,7 +74,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
 
     /* Cards and Sections */
     .section {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .section-title {
@@ -225,6 +225,126 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     .status-running { background: rgba(0, 122, 255, 0.2); color: #5ac8fa; }
     .status-error { background: rgba(255, 59, 48, 0.2); color: #ff3b30; }
 
+    /* REAL TERMINAL VIEW STYLES */
+    .terminal-card {
+      background: var(--vscode-terminal-background, #121212);
+      border: 1px solid var(--vscode-widget-border, #2a2a2a);
+      border-radius: var(--border-radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .terminal-header {
+      background: var(--vscode-sideBarSectionHeader-background, #1e1e1e);
+      border-bottom: 1px solid var(--vscode-widget-border, #2a2a2a);
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .terminal-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--vscode-foreground);
+    }
+
+    .term-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      transition: background 0.3s;
+    }
+
+    .term-dot.idle {
+      background: #6e7681;
+    }
+
+    .term-dot.running {
+      background: #58a6ff;
+      box-shadow: 0 0 6px #58a6ff;
+      animation: pulse-dot 1.2s infinite;
+    }
+
+    .term-dot.success {
+      background: #3fb950;
+      box-shadow: 0 0 4px #3fb950;
+    }
+
+    .term-dot.error {
+      background: #f85149;
+      box-shadow: 0 0 4px #f85149;
+    }
+
+    @keyframes pulse-dot {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    .terminal-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .term-tool-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--vscode-descriptionForeground);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+    }
+
+    .term-tool-btn:hover {
+      background: var(--vscode-toolbar-hoverBackground, rgba(255, 255, 255, 0.1));
+      color: var(--vscode-foreground);
+      border-color: var(--vscode-widget-border, #444);
+    }
+
+    .terminal-viewport {
+      font-family: var(--vscode-editor-font-family, Consolas, "Courier New", monospace);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--vscode-terminal-foreground, #d4d4d4);
+      padding: 10px;
+      height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      background: var(--vscode-terminal-background, #121212);
+    }
+
+    .terminal-prompt-line {
+      color: var(--vscode-terminal-ansiCyan, #56b6c2);
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .terminal-status-footer {
+      background: var(--vscode-sideBarSectionHeader-background, #1a1a1a);
+      border-top: 1px solid var(--vscode-widget-border, #2a2a2a);
+      padding: 3px 10px;
+      font-size: 10px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--vscode-descriptionForeground);
+    }
+
     /* Cache Table & Search */
     .cache-filter-bar {
       display: flex;
@@ -300,22 +420,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       line-height: 1.3;
     }
 
-    /* Terminal Output Preview */
-    .terminal-output {
-      background: var(--vscode-terminal-background, #1e1e1e);
-      color: var(--vscode-terminal-foreground, #cccccc);
-      font-family: var(--vscode-editor-font-family, "Courier New", Courier, monospace);
-      font-size: 11px;
-      padding: 8px;
-      border-radius: var(--border-radius);
-      height: 180px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
-      border: 1px solid var(--vscode-widget-border, #333);
-    }
-
-    /* Toggle switch for BOOL */
     .toggle-container {
       display: flex;
       align-items: center;
@@ -328,11 +432,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       padding: 24px 12px;
       color: var(--vscode-descriptionForeground);
     }
-
-    .empty-state svg {
-      margin-bottom: 8px;
-      opacity: 0.6;
-    }
   </style>
 </head>
 <body>
@@ -341,13 +440,13 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('build')">Build & Presets</button>
     <button class="tab-btn" onclick="switchTab('cache')">Configurator</button>
-    <button class="tab-btn" onclick="switchTab('output')">Logs</button>
+    <button class="tab-btn" onclick="switchTab('terminal')">Terminal</button>
   </div>
 
   <!-- TAB 1: Build & Presets -->
   <div id="tab-build" class="tab-pane active">
 
-    <!-- Project Selector (if multi-root or multiple CMakeLists) -->
+    <!-- Project Selector -->
     <div class="field-group" id="project-group">
       <label class="field-label" for="project-select">Active CMake Project</label>
       <select id="project-select" onchange="onProjectChange()">
@@ -383,7 +482,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       </select>
     </div>
 
-    <!-- Build Configuration & Generator (when no presets or custom) -->
+    <!-- Custom Config Fields (fallback if no presets) -->
     <div id="custom-config-fields" style="display: none;">
       <div class="field-group">
         <label class="field-label" for="config-select">Build Type</label>
@@ -428,6 +527,29 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
         <button id="btn-stop" class="btn btn-danger btn-block" style="display: none;" onclick="stopProcess()">
           ⏹️ Cancel Process
         </button>
+      </div>
+    </div>
+
+    <!-- EMBEDDED TERMINAL VIEW ON PLUGIN -->
+    <div class="terminal-card" id="plugin-terminal-card">
+      <div class="terminal-header">
+        <div class="terminal-title">
+          <span id="term-status-dot" class="term-dot idle"></span>
+          <span id="term-title-text">Terminal Output</span>
+          <span id="term-timer" style="font-weight: normal; font-size: 10px; opacity: 0.8;"></span>
+        </div>
+        <div class="terminal-toolbar">
+          <button class="term-tool-btn" onclick="clearLogs()" title="Clear terminal output">🧹 Clear</button>
+          <button class="term-tool-btn" onclick="copyTerminalText()" title="Copy output">📋 Copy</button>
+          <button class="term-tool-btn" onclick="openVsCodeTerminal()" title="Open in VS Code Bottom Terminal Panel">🖥️ Terminal</button>
+        </div>
+      </div>
+      <div id="plugin-terminal-body" class="terminal-viewport">
+        <div class="terminal-prompt-line">$ cmake-gui ready. Select preset and click Configure or Build.</div>
+      </div>
+      <div class="terminal-status-footer">
+        <span id="term-footer-status">Ready</span>
+        <span id="term-footer-cmd">Waiting for command...</span>
       </div>
     </div>
 
@@ -478,7 +600,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       </div>
     </div>
 
-    <!-- Cache list -->
     <div id="cache-list" class="cache-list">
       <!-- Filled dynamically -->
     </div>
@@ -502,13 +623,24 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
     </div>
   </div>
 
-  <!-- TAB 3: Logs / Terminal Output -->
-  <div id="tab-output" class="tab-pane">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <span class="section-title" style="margin: 0;">Live Output</span>
-      <button class="btn btn-secondary" style="font-size: 10px; padding: 2px 6px;" onclick="clearLogs()">Clear</button>
+  <!-- TAB 3: Dedicated Full Terminal View -->
+  <div id="tab-terminal" class="tab-pane">
+    <div class="terminal-card" style="height: calc(100vh - 65px);">
+      <div class="terminal-header">
+        <div class="terminal-title">
+          <span id="full-term-status-dot" class="term-dot idle"></span>
+          <span>Full Terminal Console</span>
+        </div>
+        <div class="terminal-toolbar">
+          <button class="term-tool-btn" onclick="clearLogs()">🧹 Clear</button>
+          <button class="term-tool-btn" onclick="copyTerminalText()">📋 Copy</button>
+          <button class="term-tool-btn" onclick="openVsCodeTerminal()">🖥️ VS Code Terminal</button>
+        </div>
+      </div>
+      <div id="full-terminal-body" class="terminal-viewport" style="height: 100%;">
+        <div class="terminal-prompt-line">$ cmake-gui ready.</div>
+      </div>
     </div>
-    <div id="log-output" class="terminal-output">Waiting for CMake task...</div>
   </div>
 
   <script nonce="${nonce}">
@@ -534,8 +666,9 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
 
     let activeFilterType = 'ALL';
     let showAdvanced = false;
+    let timerInterval = null;
+    let startTime = 0;
 
-    // Notify extension we are ready
     vscode.postMessage({ command: 'ready' });
 
     window.addEventListener('message', event => {
@@ -549,17 +682,13 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
           appendLog(msg.text);
           break;
         case 'clearOutput':
-          document.getElementById('log-output').textContent = '';
+          clearLogs();
           break;
         case 'processStart':
-          state.isProcessRunning = true;
-          state.currentProcessName = msg.name;
-          state.lastCommand = msg.command;
-          updateProcessState();
+          onProcessStart(msg.name, msg.command);
           break;
         case 'processEnd':
-          state.isProcessRunning = false;
-          updateProcessState();
+          onProcessEnd(msg.result);
           break;
       }
     });
@@ -575,9 +704,9 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
         document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
         document.getElementById('tab-cache').classList.add('active');
         renderCacheList();
-      } else if (tabId === 'output') {
+      } else if (tabId === 'terminal') {
         document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
-        document.getElementById('tab-output').classList.add('active');
+        document.getElementById('tab-terminal').classList.add('active');
       }
     }
 
@@ -696,6 +825,137 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       }
     }
 
+    /* Process Lifecycle & Terminal handling */
+    function onProcessStart(name, command) {
+      state.isProcessRunning = true;
+      state.currentProcessName = name;
+      state.lastCommand = command;
+      updateProcessState();
+
+      // Update terminal headers
+      const dot1 = document.getElementById('term-status-dot');
+      const dot2 = document.getElementById('full-term-status-dot');
+      if (dot1) dot1.className = 'term-dot running';
+      if (dot2) dot2.className = 'term-dot running';
+
+      document.getElementById('term-title-text').textContent = \`Running: \${name}\`;
+      document.getElementById('term-footer-status').textContent = \`Executing: \${name}\`;
+      document.getElementById('term-footer-cmd').textContent = command;
+
+      // Start elapsed timer
+      startTime = Date.now();
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        document.getElementById('term-timer').textContent = \`(\${elapsed}s)\`;
+      }, 100);
+
+      // Append command prompt to terminal
+      const promptHtml = \`<div class="terminal-prompt-line" style="margin-top: 8px;">$ \${escapeHtml(command)}</div>\`;
+      appendHtmlToTerminals(promptHtml);
+
+      // Scroll terminal view into view smoothly
+      const termCard = document.getElementById('plugin-terminal-card');
+      if (termCard) {
+        termCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function onProcessEnd(result) {
+      state.isProcessRunning = false;
+      updateProcessState();
+      clearInterval(timerInterval);
+
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+      const exitCode = result?.exitCode ?? 0;
+      const success = exitCode === 0;
+
+      const dot1 = document.getElementById('term-status-dot');
+      const dot2 = document.getElementById('full-term-status-dot');
+      const statusClass = success ? 'term-dot success' : 'term-dot error';
+      if (dot1) dot1.className = statusClass;
+      if (dot2) dot2.className = statusClass;
+
+      document.getElementById('term-title-text').textContent = \`Terminal: \${success ? 'Completed' : 'Failed'}\`;
+      document.getElementById('term-footer-status').textContent = success ? \`Finished in \${elapsed}s\` : \`Failed (Exit \${exitCode})\`;
+
+      const resultHtml = success
+        ? \`<div style="color: #4cd964; margin-top: 4px; font-weight: bold;">[Finished successfully in \${elapsed}s]</div>\`
+        : \`<div style="color: #ff5252; margin-top: 4px; font-weight: bold;">[Command failed with exit code \${exitCode} in \${elapsed}s]</div>\`;
+
+      appendHtmlToTerminals(resultHtml);
+    }
+
+    function appendLog(rawText) {
+      const formatted = ansiToHtml(rawText);
+      appendHtmlToTerminals(formatted);
+    }
+
+    function appendHtmlToTerminals(html) {
+      const inlineTerm = document.getElementById('plugin-terminal-body');
+      const fullTerm = document.getElementById('full-terminal-body');
+
+      if (inlineTerm) {
+        inlineTerm.innerHTML += html;
+        inlineTerm.scrollTop = inlineTerm.scrollHeight;
+      }
+      if (fullTerm) {
+        fullTerm.innerHTML += html;
+        fullTerm.scrollTop = fullTerm.scrollHeight;
+      }
+    }
+
+    function clearLogs() {
+      const inlineTerm = document.getElementById('plugin-terminal-body');
+      const fullTerm = document.getElementById('full-terminal-body');
+      if (inlineTerm) inlineTerm.innerHTML = '<div class="terminal-prompt-line">$ Terminal cleared.</div>';
+      if (fullTerm) fullTerm.innerHTML = '<div class="terminal-prompt-line">$ Terminal cleared.</div>';
+      document.getElementById('term-timer').textContent = '';
+      const dot1 = document.getElementById('term-status-dot');
+      const dot2 = document.getElementById('full-term-status-dot');
+      if (dot1) dot1.className = 'term-dot idle';
+      if (dot2) dot2.className = 'term-dot idle';
+    }
+
+    function copyTerminalText() {
+      const inlineTerm = document.getElementById('plugin-terminal-body');
+      if (inlineTerm) {
+        navigator.clipboard.writeText(inlineTerm.innerText);
+      }
+    }
+
+    function openVsCodeTerminal() {
+      vscode.postMessage({ command: 'openTerminal' });
+    }
+
+    function ansiToHtml(text) {
+      let html = escapeHtml(text);
+
+      // Convert common ANSI color codes to styled HTML
+      html = html
+        .replace(/\\x1b\\[0?m/g, '</span>')
+        .replace(/\\x1b\\[1m/g, '<span style="font-weight:bold;">')
+        .replace(/\\x1b\\[2m/g, '<span style="opacity:0.7;">')
+        .replace(/\\x1b\\[31m/g, '<span style="color: #ff5252;">')
+        .replace(/\\x1b\\[32m/g, '<span style="color: #4cd964;">')
+        .replace(/\\x1b\\[33m/g, '<span style="color: #ffd600;">')
+        .replace(/\\x1b\\[34m/g, '<span style="color: #40a9ff;">')
+        .replace(/\\x1b\\[35m/g, '<span style="color: #f759ab;">')
+        .replace(/\\x1b\\[36m/g, '<span style="color: #36cfc9;">')
+        .replace(/\\x1b\\[37m/g, '<span style="color: #ffffff;">')
+        .replace(/\\x1b\\[90m/g, '<span style="color: #8c8c8c;">')
+        .replace(/\\x1b\\[[0-9;]*m/g, ''); // strip remaining ANSI sequences
+
+      return html;
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
     function onProjectChange() {
       const val = document.getElementById('project-select').value;
       vscode.postMessage({ command: 'selectProject', projectId: val });
@@ -728,22 +988,18 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
 
     function runConfigure() {
       vscode.postMessage({ command: 'configure' });
-      switchTab('output');
     }
 
     function runBuild() {
       vscode.postMessage({ command: 'build' });
-      switchTab('output');
     }
 
     function runClean() {
       vscode.postMessage({ command: 'clean' });
-      switchTab('output');
     }
 
     function runTest() {
       vscode.postMessage({ command: 'test' });
-      switchTab('output');
     }
 
     function stopProcess() {
@@ -824,7 +1080,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
           item.appendChild(helpSpan);
         }
 
-        // Value control based on type
         if (entry.type === 'BOOL') {
           const toggleLabel = document.createElement('label');
           toggleLabel.className = 'toggle-container';
@@ -873,16 +1128,6 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
       nameInput.value = '';
       valInput.value = '';
     }
-
-    function appendLog(text) {
-      const out = document.getElementById('log-output');
-      out.textContent += text;
-      out.scrollTop = out.scrollHeight;
-    }
-
-    function clearLogs() {
-      document.getElementById('log-output').textContent = '';
-    }
   </script>
 </body>
 </html>`;
@@ -896,4 +1141,3 @@ function getNonce(): string {
   }
   return text;
 }
-

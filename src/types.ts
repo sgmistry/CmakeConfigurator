@@ -134,6 +134,8 @@ export type WebviewMessage =
   | { command: 'refresh' }
   | { command: 'openFile'; filePath: string }
   | { command: 'scaffoldPresets' }
+  | { command: 'openTerminal' }
   | { command: 'updateCacheEntry'; name: string; value: string; type: string }
   | { command: 'addCacheEntry'; name: string; value: string; type: string };
+
 

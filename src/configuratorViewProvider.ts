@@ -295,6 +295,12 @@ export class ConfiguratorViewProvider implements vscode.WebviewViewProvider {
         await this.scaffoldPresets();
         break;
 
+      case 'openTerminal':
+        const currentProj = this.getActiveProject();
+        this.runner.showOrOpenVsCodeTerminal(currentProj?.sourceDir);
+        break;
+
+
       case 'updateCacheEntry':
         if (this.state.buildDir) {
           const cacheFile = path.join(this.state.buildDir, 'CMakeCache.txt');

@@ -137,9 +137,23 @@ export class CMakeRunner {
     return Promise.resolve({ exitCode: 0, command });
   }
 
+  private sharedTerminal: vscode.Terminal | null = null;
+
+  public showOrOpenVsCodeTerminal(cwd?: string): void {
+    if (!this.sharedTerminal || this.sharedTerminal.exitStatus !== undefined) {
+      this.sharedTerminal = vscode.window.createTerminal({
+        name: 'CMake Terminal',
+        cwd
+      });
+    }
+    this.sharedTerminal.show(true);
+  }
+
+
   /**
    * Stop the running process
    */
+
   public stop(): boolean {
     if (this.currentProcess) {
       this.log('\n[CMake GUI] Terminating process...\n');

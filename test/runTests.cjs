@@ -16,7 +16,8 @@ const presets = PresetManager.loadPresets(sampleDir);
 
 assert.strictEqual(presets.configurePresets.length, 4, 'Should load 4 configure presets');
 assert.strictEqual(presets.buildPresets.length, 4, 'Should load 4 build presets');
-assert.strictEqual(presets.testPresets.length, 1, 'Should load 1 test preset');
+assert.strictEqual(presets.testPresets.length, 2, 'Should load 2 test presets');
+
 
 const ninjaDebug = presets.configurePresets.find(p => p.name === 'ninja-debug');
 assert(ninjaDebug, 'ninja-debug preset should exist');

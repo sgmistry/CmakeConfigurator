@@ -2,34 +2,30 @@
   "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 20,
+    "minor": 23,
     "patch": 0
   },
   "configurePresets": [
     {
       "name": "ninja-debug",
       "displayName": "Ninja Debug",
-      "description": "Debug build with symbols using Ninja generator",
+      "description": "Debug build using Ninja generator",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "BUILD_CALCULATOR_CLI": "ON",
-        "ENABLE_UNIT_TESTING": "ON",
-        "CALCULATOR_PRECISION": "HIGH"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
     {
       "name": "ninja-release",
       "displayName": "Ninja Release",
-      "description": "Optimized release build using Ninja generator",
+      "description": "Optimized Release build using Ninja generator",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "BUILD_CALCULATOR_CLI": "ON",
-        "ENABLE_UNIT_TESTING": "OFF",
-        "CALCULATOR_PRECISION": "HIGH"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
     {
@@ -40,55 +36,53 @@
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "BUILD_CALCULATOR_CLI": "ON",
-        "ENABLE_UNIT_TESTING": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
     {
       "name": "make-release",
       "displayName": "Unix Makefiles Release",
-      "description": "Optimized build using Unix Makefiles",
+      "description": "Release build using Unix Makefiles",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "BUILD_CALCULATOR_CLI": "ON",
-        "ENABLE_UNIT_TESTING": "OFF"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "build-all-debug",
-      "displayName": "Build All (Debug)",
-      "configurePreset": "ninja-debug",
-      "targets": "all"
+      "name": "build-ninja-debug",
+      "displayName": "Build Ninja Debug",
+      "configurePreset": "ninja-debug"
     },
     {
-      "name": "build-cli-debug",
-      "displayName": "Build CLI Executable Only",
-      "configurePreset": "ninja-debug",
-      "targets": "calculator_cli"
+      "name": "build-ninja-release",
+      "displayName": "Build Ninja Release",
+      "configurePreset": "ninja-release"
     },
     {
-      "name": "build-tests-debug",
-      "displayName": "Build Tests Target",
-      "configurePreset": "ninja-debug",
-      "targets": "calc_tests"
+      "name": "build-make-debug",
+      "displayName": "Build Make Debug",
+      "configurePreset": "make-debug"
     },
     {
-      "name": "build-all-release",
-      "displayName": "Build All (Release)",
-      "configurePreset": "ninja-release",
-      "targets": "all"
+      "name": "build-make-release",
+      "displayName": "Build Make Release",
+      "configurePreset": "make-release"
     }
   ],
   "testPresets": [
     {
-      "name": "test-debug",
-      "displayName": "Run All Tests (Debug)",
+      "name": "test-ninja-debug",
+      "displayName": "Test Ninja Debug",
       "configurePreset": "ninja-debug"
+    },
+    {
+      "name": "test-ninja-release",
+      "displayName": "Test Ninja Release",
+      "configurePreset": "ninja-release"
     }
   ]
 }
-
