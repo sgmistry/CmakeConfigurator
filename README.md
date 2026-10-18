@@ -1,6 +1,7 @@
 # CMake Project Configuration/Build Helper for VS Code
 
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/samir.cmake-gui-builder?label=Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=samir.cmake-gui-builder)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/SamirMistry.cmake-gui-helper?label=Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=SamirMistry.cmake-gui-helper)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![VS Code Engine](https://img.shields.io/badge/VS%20Code-%3E%3D%201.85.0-blue)](https://code.visualstudio.com/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-sgmistry%2FCmakeConfigurator-181717?logo=github)](https://github.com/sgmistry/CmakeConfigurator)

@@ -1,6 +1,7 @@
 {
-  "name": "cmake-gui-builder",
+  "name": "cmake-gui-helper",
   "displayName": "CMake Project Configuration/Build Helper",
+
   "description": "Smart CMake project scanner, GUI configurator, and build panel with preset selection dropdowns",
   "version": "1.0.1",
 
