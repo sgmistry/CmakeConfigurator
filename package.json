@@ -2,8 +2,10 @@
   "name": "cmake-gui-builder",
   "displayName": "CMake Project Configuration/Build Helper",
   "description": "Smart CMake project scanner, GUI configurator, and build panel with preset selection dropdowns",
-  "version": "1.0.0",
+  "version": "1.0.1",
+
   "publisher": "SamirMistry",
+
   "license": "MIT",
   "icon": "resources/icon.png",
   "engines": {
