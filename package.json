@@ -3,7 +3,7 @@
   "displayName": "CMake Project Configuration/Build Helper",
   "description": "Smart CMake project scanner, GUI configurator, and build panel with preset selection dropdowns",
   "version": "1.0.0",
-  "publisher": "samir",
+  "publisher": "SamirMistry",
   "license": "MIT",
   "icon": "resources/icon.png",
   "engines": {
@@ -165,12 +165,13 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run compile && npm run bundle",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "bundle": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
     "package": "vsce package"
   },
+
   "devDependencies": {
     "@types/node": "^20.11.24",
     "@types/vscode": "^1.85.0",
