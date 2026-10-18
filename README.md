@@ -1,6 +1,6 @@
-# CMake Project Configuration/Build Helper for VS Code
+# CMake Preset & Build Configurator for VS Code
 
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/SamirMistry.cmake-gui-helper?label=Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=SamirMistry.cmake-gui-helper)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/SamirMistry.cmake-preset-configurator?label=Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=SamirMistry.cmake-preset-configurator)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![VS Code Engine](https://img.shields.io/badge/VS%20Code-%3E%3D%201.85.0-blue)](https://code.visualstudio.com/)
@@ -10,7 +10,7 @@ A modern, fast, and visual **CMake Configurator & Build Panel** for VS Code. Aut
 
 ---
 
-## ✨ Why CMake Project Configuration/Build Helper?
+## ✨ Why CMake Preset & Build Configurator?
 
 Working with CMake on complex projects often requires remembering long CLI flags, navigating nested build folders, or manually editing `CMakeCache.txt`. 
 
@@ -70,7 +70,7 @@ This extension brings a clean, modern GUI right to your VS Code Activity Bar:
 
 ## 🏁 Quick Start
 
-1. Install **CMake Project Configuration/Build Helper** from the VS Code Marketplace.
+1. Install **CMake Preset & Build Configurator** from the VS Code Marketplace.
 2. Open any folder or workspace containing a `CMakeLists.txt` or `CMakePresets.json`.
 3. Click the **CMake** icon in the Activity Bar (left sidebar).
 4. Select your **Configure Preset** and **Build Target** from the dropdowns.

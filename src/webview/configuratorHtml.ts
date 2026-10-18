@@ -9,7 +9,7 @@ export function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'unsafe-inline' 'nonce-${nonce}';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CMake Project Configuration/Build Helper</title>
+  <title>CMake Preset & Build Configurator</title>
   <style>
 
     :root {

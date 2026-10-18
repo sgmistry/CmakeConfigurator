@@ -1,6 +1,6 @@
 {
-  "name": "cmake-gui-helper",
-  "displayName": "CMake Project Configuration/Build Helper",
+  "name": "cmake-preset-configurator",
+  "displayName": "CMake Preset & Build Configurator",
 
   "description": "Smart CMake project scanner, GUI configurator, and build panel with preset selection dropdowns",
   "version": "1.0.1",
@@ -47,7 +47,7 @@
       "activitybar": [
         {
           "id": "cmake-gui-sidebar",
-          "title": "CMake Project Configuration/Build Helper",
+          "title": "CMake Preset & Build Configurator",
           "icon": "resources/cmake-icon.svg"
         }
       ]
@@ -57,7 +57,7 @@
         {
           "type": "webview",
           "id": "cmake-gui.configuratorView",
-          "name": "CMake Project Configuration/Build Helper",
+          "name": "CMake Preset & Build Configurator",
           "visibility": "visible"
         }
       ]
@@ -137,7 +137,7 @@
       ]
     },
     "configuration": {
-      "title": "CMake GUI Configurator",
+      "title": "CMake Preset & Build Configurator",
       "properties": {
         "cmakeGui.cmakePath": {
           "type": "string",
