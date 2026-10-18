@@ -20,9 +20,9 @@
 
   "categories": [
     "Programming Languages",
-    "Build Systems",
     "Other"
   ],
+
   "keywords": [
     "cmake",
     "presets",
